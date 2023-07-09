@@ -4,6 +4,7 @@
 </head>
 
 <body>
+    <h1>Nothing to see here...</h1>
     <script>
         function base64ToBytes(base64) {
             const binString = atob(base64);
@@ -21,8 +22,6 @@
 
             document.body.innerHTML = new TextDecoder().decode(decompressed) 
 
-        } else {
-            alert("Error, no hash provided!")
         }
     </script>
 </body>
