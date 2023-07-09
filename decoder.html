@@ -1,0 +1,28 @@
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>        
+    <title>Hyte</title>
+</head>
+
+<body>
+    <script>
+        function base64ToBytes(base64) {
+            const binString = atob(base64);
+            return Uint8Array.from(binString, (m) => m.codePointAt(0));
+        }
+
+        if(window.location.hash) {
+            let hash = window.location.hash.substring(1).split("?")[0];
+
+            const decoded = atob(hash);
+            const base64_as_bytes = new Uint8Array(Array.from(decoded).map(c => c.charCodeAt(0)));
+
+            let decompressed = pako.inflate(base64_as_bytes)
+
+
+            document.body.innerHTML = new TextDecoder().decode(decompressed) 
+
+        } else {
+            alert("Error, no hash provided!")
+        }
+    </script>
+</body>
