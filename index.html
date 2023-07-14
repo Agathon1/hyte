@@ -20,7 +20,7 @@
             let decompressed = pako.inflate(base64_as_bytes)
 
 
-            document.innerHTML = new TextDecoder().decode(decompressed) 
+            document.getElementsByTagName("html")[0].innerHTML = new TextDecoder().decode(decompressed) 
 
         }
     </script>
