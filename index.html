@@ -14,14 +14,13 @@
         if(window.location.hash) {
             let hash = window.location.hash.substring(1).split("&")[0];
 
-            const decoded = atob(hash);
-            const base64_as_bytes = new Uint8Array(Array.from(decoded).map(c => c.charCodeAt(0)));
+            let base64_as_bytes = base64ToBytes(hash);
 
             let decompressed = pako.inflate(base64_as_bytes)
 
+            console.log(new TextDecoder().decode(decompressed))
 
-            document.getElementsByTagName("html")[0].innerHTML = new TextDecoder().decode(decompressed) 
-
+            document.getElementsByTagName("html")[0].innerHTML = new TextDecoder().decode(decompressed)
         }
     </script>
 </body>
