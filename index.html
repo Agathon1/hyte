@@ -14,9 +14,15 @@
         if(window.location.hash) {
             let hash = window.location.hash.substring(1).split("&")[0];
 
+            console.log(hash)
+            
             let base64_as_bytes = base64ToBytes(hash);
 
+            console.log(base64_as_bytes)
+
             let decompressed = pako.inflate(base64_as_bytes)
+
+            console.log(decompressed)
 
             console.log(new TextDecoder().decode(decompressed))
 
