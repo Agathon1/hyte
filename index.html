@@ -6,75 +6,76 @@
 <body>
     <h1>Nothing to see here...</h1>
     <script>
-    function base64ToBytes(base64) {
-        const binString = atob(base64);
-        return Uint8Array.from(binString, (m) => m.codePointAt(0));
-    }
-
-    if(window.location.hash) {
-        let hash = window.location.hash.substring(1).split("&")[0];
-
-        console.log(hash);
-        
-        let base64_as_bytes = base64ToBytes(hash);
-
-        console.log(base64_as_bytes);
-
-        let decompressed = pako.inflate(base64_as_bytes);
-
-        console.log(decompressed);
-
-        let htmlString = new TextDecoder().decode(decompressed);
-        
-        console.log(htmlString);
-
-        // Parse the HTML string into a Document object
-        let parser = new DOMParser();
-        let doc = parser.parseFromString(htmlString, 'text/html');
-
-        // Get the head and body HTML
-        let headHTML = doc.head.innerHTML;
-        let bodyHTML = doc.body.innerHTML;
-
-        // Replace the entire document's head and body
-        document.head.innerHTML = headHTML;
-        document.body.outerHTML = doc.body.outerHTML;
-
-        // Get the JavaScript code within <script> tags in head and body separately
-        let headScripts = Array.from(doc.head.getElementsByTagName('script'));
-        let bodyScripts = Array.from(doc.body.getElementsByTagName('script'));
-
-        // Get the CSS code within <style> tags
-        let styles = Array.from(doc.getElementsByTagName('style')).map(style => style.textContent);
-
-        // Add the CSS to the document
-        let style = document.createElement('style');
-        style.textContent = styles.join("\n");
-        document.head.appendChild(style);
-
-        // Function to add the scripts to the document
-        const addScripts = (scripts, target) => {
-            scripts.forEach(originalScript => {
-                let script = document.createElement('script');
-                if (originalScript.src) {
-                    // For scripts with a src attribute, set the new script's src to the same value
-                    script.src = originalScript.src;
-                } else {
-                    // For inline scripts, copy over the textContent
-                    script.textContent = originalScript.textContent;
-                    if(originalScript.type === "module") {
-                        script.type = "module";
-                    }
-                }
-                target.appendChild(script);
-            });
+        function base64ToBytes(base64) {
+            const binString = atob(base64);
+            return Uint8Array.from(binString, (m) => m.codePointAt(0));
         }
-
-        // Add the JavaScript to the head and body of the document
-        addScripts(headScripts, document.head);
-        addScripts(bodyScripts, document.body);
-    }
-</script>
+    
+        if(window.location.hash) {
+            let hash = window.location.hash.substring(1).split("&")[0];
+    
+            console.log(hash);
+            
+            let base64_as_bytes = base64ToBytes(hash);
+    
+            console.log(base64_as_bytes);
+    
+            let decompressed = pako.inflate(base64_as_bytes);
+    
+            console.log(decompressed);
+    
+            let htmlString = new TextDecoder().decode(decompressed);
+            
+            console.log(htmlString);
+    
+            // Parse the HTML string into a Document object
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(htmlString, 'text/html');
+    
+            // Get the head and body HTML
+            let headHTML = doc.head.innerHTML.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
+            let bodyHTML = doc.body.innerHTML.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
+    
+            // Replace the entire document's head and body
+            document.head.innerHTML = headHTML;
+            document.body.outerHTML = doc.body.outerHTML;
+    
+            // Get the JavaScript code within <script> tags in head and body separately
+            let headScripts = Array.from(doc.head.getElementsByTagName('script'));
+            let bodyScripts = Array.from(doc.body.getElementsByTagName('script'));
+    
+            // Get the CSS code within <style> tags
+            let styles = Array.from(doc.getElementsByTagName('style')).map(style => style.textContent);
+    
+            // Add the CSS to the document
+            let style = document.createElement('style');
+            style.textContent = styles.join("\n");
+            document.head.appendChild(style);
+    
+            // Function to add the scripts to the document
+            const addScripts = (scripts, target) => {
+                scripts.forEach(originalScript => {
+                    let script = document.createElement('script');
+                    if (originalScript.src) {
+                        // For scripts with a src attribute, set the new script's src to the same value
+                        script.src = originalScript.src;
+                    } else {
+                        // For inline scripts, copy over the textContent
+                        script.textContent = originalScript.textContent;
+                        if(originalScript.type === "module") {
+                            script.type = "module";
+                        }
+                    }
+                    target.appendChild(script);
+                });
+            }
+    
+            // Add the JavaScript to the head and body of the document
+            addScripts(headScripts, document.head);
+            addScripts(bodyScripts, document.body);
+        }
+    </script>
+    
 
 
 
