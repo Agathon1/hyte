@@ -50,8 +50,14 @@
         document.head.appendChild(style);
 
         // Add the JavaScript to the document
-        scripts.forEach(scriptCode => {
+        scripts.forEach((scriptCode, index) => {
             let script = document.createElement('script');
+        
+            // Check if it is a module script or normal script
+            if(doc.scripts[index].type === "module") {
+                script.type = "module";
+            }
+            
             script.textContent = scriptCode;
             document.body.appendChild(script);
         });
