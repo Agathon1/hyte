@@ -50,6 +50,11 @@
             // Replace the entire document's head and body
             document.head.innerHTML = headHTML;
             document.body.innerHTML = bodyHTML;  // Change here
+
+            for (let i = 0; i < doc.body.attributes.length; i++) {
+                let attr = doc.body.attributes[i];
+                document.body.setAttribute(attr.name, attr.value);
+            }
     
             // Add the CSS to the document
             let style = document.createElement('style');
