@@ -35,18 +35,16 @@
         // Get the head HTML (excluding <script> and <style> tags)
         let headHTML = doc.head.innerHTML;
 
-        // Get the body HTML (excluding <script> and <style> tags)
-        let bodyHTML = doc.body.innerHTML;
+        // Replace the entire document's head and body with parsed document's head and body.
+        // The attributes of the body tag are also preserved.
+        document.head.innerHTML = headHTML;
+        document.body.outerHTML = doc.body.outerHTML;
 
         // Get the JavaScript code within <script> tags
         let scripts = Array.from(doc.getElementsByTagName('script')).map(script => script.textContent);
 
         // Get the CSS code within <style> tags
         let styles = Array.from(doc.getElementsByTagName('style')).map(style => style.textContent);
-
-        // Replace the head and body HTML in the document
-        document.head.innerHTML = headHTML;
-        document.body.innerHTML = bodyHTML;
 
         // Add the CSS to the document
         let style = document.createElement('style');
@@ -64,5 +62,6 @@
         });
     }
 </script>
+
 
 </body>
