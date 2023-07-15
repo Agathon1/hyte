@@ -32,16 +32,17 @@
         let parser = new DOMParser();
         let doc = parser.parseFromString(htmlString, 'text/html');
 
-        // Get the head HTML (excluding <script> and <style> tags)
+        // Get the head and body HTML
         let headHTML = doc.head.innerHTML;
+        let bodyHTML = doc.body.innerHTML;
 
-        // Replace the entire document's head and body with parsed document's head and body.
-        // The attributes of the body tag are also preserved.
+        // Replace the entire document's head and body
         document.head.innerHTML = headHTML;
         document.body.outerHTML = doc.body.outerHTML;
 
-        // Get the JavaScript code within <script> tags
-        let scripts = Array.from(doc.getElementsByTagName('script')).map(script => script.textContent);
+        // Get the JavaScript code within <script> tags in head and body separately
+        let headScripts = Array.from(doc.head.getElementsByTagName('script'));
+        let bodyScripts = Array.from(doc.body.getElementsByTagName('script'));
 
         // Get the CSS code within <style> tags
         let styles = Array.from(doc.getElementsByTagName('style')).map(style => style.textContent);
@@ -51,29 +52,30 @@
         style.textContent = styles.join("\n");
         document.head.appendChild(style);
 
-        // Add the JavaScript to the document
-        // Add the JavaScript to the document
-        Array.from(doc.getElementsByTagName('script')).forEach((originalScript, index) => {
-            let script = document.createElement('script');
-        
-            if (originalScript.src) {
-                // For scripts with a src attribute, set the new script's src to the same value
-                script.src = originalScript.src;
-                // Add the defer attribute to ensure scripts execute in order
-                //script.defer = true;
-            } else {
-                // For inline scripts, copy over the textContent
-                script.textContent = originalScript.textContent;
-                if(originalScript.type === "module") {
-                    script.type = "module";
+        // Function to add the scripts to the document
+        const addScripts = (scripts, target) => {
+            scripts.forEach(originalScript => {
+                let script = document.createElement('script');
+                if (originalScript.src) {
+                    // For scripts with a src attribute, set the new script's src to the same value
+                    script.src = originalScript.src;
+                } else {
+                    // For inline scripts, copy over the textContent
+                    script.textContent = originalScript.textContent;
+                    if(originalScript.type === "module") {
+                        script.type = "module";
+                    }
                 }
-            }
-        
-            document.body.appendChild(script);
-        });
+                target.appendChild(script);
+            });
+        }
 
+        // Add the JavaScript to the head and body of the document
+        addScripts(headScripts, document.head);
+        addScripts(bodyScripts, document.body);
     }
 </script>
+
 
 
 </body>
