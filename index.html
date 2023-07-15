@@ -1,4 +1,5 @@
 <head>
+    <!-- Including Pako library for inflating compressed data -->
     <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>        
     <title>Hyte</title>
 </head>
@@ -6,83 +7,83 @@
 <body>
     <h1>Nothing to see here...</h1>
     <script>
+        // Function to convert Base64 string to bytes
         function base64ToBytes(base64) {
-            const binString = atob(base64);
-            return Uint8Array.from(binString, (m) => m.codePointAt(0));
+            const binaryString = atob(base64);
+            return Uint8Array.from(binaryString, (character) => character.codePointAt(0));
         }
-    
+
+        // Check if the URL contains a hash value
         if(window.location.hash) {
-            let hash = window.location.hash.substring(1).split("&")[0];
-    
-            console.log(hash);
-            
-            let base64_as_bytes = base64ToBytes(hash);
-    
-            console.log(base64_as_bytes);
-    
-            let decompressed = pako.inflate(base64_as_bytes);
-    
-            console.log(decompressed);
-    
-            let htmlString = new TextDecoder().decode(decompressed);
-            
-            console.log(htmlString);
-    
-            // Parse the HTML string into a Document object
+            // Extract the first part of the hash value
+            let hashValue = window.location.hash.substring(1).split("&")[0];
+
+            // Convert Base64 hash value to bytes
+            let base64Bytes = base64ToBytes(hashValue);
+
+            // Decompress the Base64 bytes using Pako
+            let decompressedData = pako.inflate(base64Bytes);
+
+            // Decode the decompressed data to a HTML string
+            let htmlString = new TextDecoder().decode(decompressedData);
+
+            // Create a new DOMParser object
             let parser = new DOMParser();
-            let doc = parser.parseFromString(htmlString, 'text/html');
-    
-            // Get the JavaScript code within <script> tags in head and body separately
-            let headScripts = Array.from(doc.head.getElementsByTagName('script'));
-            let bodyScripts = Array.from(doc.body.getElementsByTagName('script'));
-    
+
+            // Parse the HTML string into a Document object
+            let parsedDocument = parser.parseFromString(htmlString, 'text/html');
+
+            // Extract scripts from the parsed document
+            let headScripts = Array.from(parsedDocument.head.getElementsByTagName('script'));
+            let bodyScripts = Array.from(parsedDocument.body.getElementsByTagName('script'));
+
             // Remove the scripts from the parsed document
             headScripts.forEach(script => script.parentNode.removeChild(script));
             bodyScripts.forEach(script => script.parentNode.removeChild(script));
-    
-            // Get the CSS code within <style> tags
-            let styles = Array.from(doc.getElementsByTagName('style')).map(style => style.textContent);
-    
-            // Get the head and body HTML
-            let headHTML = doc.head.innerHTML;
-            let bodyHTML = doc.body.innerHTML;
-    
+
+            // Extract styles from the parsed document
+            let styles = Array.from(parsedDocument.getElementsByTagName('style')).map(style => style.textContent);
+
+            // Extract the head and body HTML from the parsed document
+            let headHTML = parsedDocument.head.innerHTML;
+            let bodyHTML = parsedDocument.body.innerHTML;
+
             // Replace the entire document's head and body
             document.head.innerHTML = headHTML;
-            document.body.innerHTML = bodyHTML;  // Change here
+            document.body.innerHTML = bodyHTML;
 
-            for (let i = 0; i < doc.body.attributes.length; i++) {
-                let attr = doc.body.attributes[i];
-                document.body.setAttribute(attr.name, attr.value);
+            // Copy all body attributes from the parsed document to the current document
+            for (let i = 0; i < parsedDocument.body.attributes.length; i++) {
+                let attribute = parsedDocument.body.attributes[i];
+                document.body.setAttribute(attribute.name, attribute.value);
             }
-    
-            // Add the CSS to the document
-            let style = document.createElement('style');
-            style.textContent = styles.join("\n");
-            document.head.appendChild(style);
-    
-            // Function to add the scripts to the document
+
+            // Add the extracted CSS to the document
+            let styleElement = document.createElement('style');
+            styleElement.textContent = styles.join("\n");
+            document.head.appendChild(styleElement);
+
+            // Function to add scripts back to the target (head or body) of the document
             const addScripts = (originalScripts, target) => {
                 originalScripts.forEach(originalScript => {
-                    let script = document.createElement('script');
+                    let scriptElement = document.createElement('script');
                     if (originalScript.src) {
-                        // For scripts with a src attribute, set the new script's src to the same value
-                        script.src = originalScript.src;
+                        // For external scripts
+                        scriptElement.src = originalScript.src;
                     } else {
-                        // For inline scripts, copy over the textContent
-                        script.textContent = originalScript.textContent;
+                        // For inline scripts
+                        scriptElement.textContent = originalScript.textContent;
                         if(originalScript.type === "module") {
-                            script.type = "module";
+                            scriptElement.type = "module";
                         }
                     }
-                    target.appendChild(script);
+                    target.appendChild(scriptElement);
                 });
             }
-    
-            // Add the JavaScript to the head and body of the document
+
+            // Add the extracted JavaScript back to the head and body of the document
             addScripts(headScripts, document.head);
             addScripts(bodyScripts, document.body);
         }
     </script>
-    
 </body>
