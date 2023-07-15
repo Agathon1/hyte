@@ -6,27 +6,55 @@
 <body>
     <h1>Nothing to see here...</h1>
     <script>
-        function base64ToBytes(base64) {
-            const binString = atob(base64);
-            return Uint8Array.from(binString, (m) => m.codePointAt(0));
-        }
+    function base64ToBytes(base64) {
+        const binString = atob(base64);
+        return Uint8Array.from(binString, (m) => m.codePointAt(0));
+    }
 
-        if(window.location.hash) {
-            let hash = window.location.hash.substring(1).split("&")[0];
+    if(window.location.hash) {
+        let hash = window.location.hash.substring(1).split("&")[0];
 
-            console.log(hash)
-            
-            let base64_as_bytes = base64ToBytes(hash);
+        console.log(hash);
+        
+        let base64_as_bytes = base64ToBytes(hash);
 
-            console.log(base64_as_bytes)
+        console.log(base64_as_bytes);
 
-            let decompressed = pako.inflate(base64_as_bytes)
+        let decompressed = pako.inflate(base64_as_bytes);
 
-            console.log(decompressed)
+        console.log(decompressed);
 
-            console.log(new TextDecoder().decode(decompressed))
+        let htmlString = new TextDecoder().decode(decompressed);
+        
+        console.log(htmlString);
 
-            document.getElementsByTagName("html")[0].innerHTML = new TextDecoder().decode(decompressed)
-        }
-    </script>
+        // Parse the HTML string into a Document object
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(htmlString, 'text/html');
+
+        // Get the body HTML (excluding <script> and <style> tags)
+        let bodyHTML = doc.body.innerHTML;
+
+        // Get the JavaScript code within <script> tags
+        let scripts = Array.from(doc.getElementsByTagName('script')).map(script => script.textContent);
+
+        // Get the CSS code within <style> tags
+        let styles = Array.from(doc.getElementsByTagName('style')).map(style => style.textContent);
+
+        // Add the body HTML to the document
+        document.body.innerHTML = bodyHTML;
+
+        // Add the CSS to the document
+        let style = document.createElement('style');
+        style.textContent = styles.join("\n");
+        document.head.appendChild(style);
+
+        // Add the JavaScript to the document
+        scripts.forEach(scriptCode => {
+            let script = document.createElement('script');
+            script.textContent = scriptCode;
+            document.body.appendChild(script);
+        });
+    }
+</script>
 </body>
