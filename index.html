@@ -32,20 +32,24 @@
             let parser = new DOMParser();
             let doc = parser.parseFromString(htmlString, 'text/html');
     
-            // Get the head and body HTML
-            let headHTML = doc.head.innerHTML.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
-            let bodyHTML = doc.body.innerHTML.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "");
-    
-            // Replace the entire document's head and body
-            document.head.innerHTML = headHTML;
-            document.body.outerHTML = doc.body.outerHTML;
-    
             // Get the JavaScript code within <script> tags in head and body separately
             let headScripts = Array.from(doc.head.getElementsByTagName('script'));
             let bodyScripts = Array.from(doc.body.getElementsByTagName('script'));
     
+            // Remove the scripts from the parsed document
+            headScripts.forEach(script => script.parentNode.removeChild(script));
+            bodyScripts.forEach(script => script.parentNode.removeChild(script));
+    
             // Get the CSS code within <style> tags
             let styles = Array.from(doc.getElementsByTagName('style')).map(style => style.textContent);
+    
+            // Get the head and body HTML
+            let headHTML = doc.head.innerHTML;
+            let bodyHTML = doc.body.innerHTML;
+    
+            // Replace the entire document's head and body
+            document.head.innerHTML = headHTML;
+            document.body.outerHTML = bodyHTML;
     
             // Add the CSS to the document
             let style = document.createElement('style');
@@ -53,8 +57,8 @@
             document.head.appendChild(style);
     
             // Function to add the scripts to the document
-            const addScripts = (scripts, target) => {
-                scripts.forEach(originalScript => {
+            const addScripts = (originalScripts, target) => {
+                originalScripts.forEach(originalScript => {
                     let script = document.createElement('script');
                     if (originalScript.src) {
                         // For scripts with a src attribute, set the new script's src to the same value
@@ -74,9 +78,5 @@
             addScripts(headScripts, document.head);
             addScripts(bodyScripts, document.body);
         }
-    </script>
-    
-
-
-
+    </script>    
 </body>
