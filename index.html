@@ -52,12 +52,15 @@
         document.head.appendChild(style);
 
         // Add the JavaScript to the document
+        // Add the JavaScript to the document
         Array.from(doc.getElementsByTagName('script')).forEach((originalScript, index) => {
             let script = document.createElement('script');
         
             if (originalScript.src) {
                 // For scripts with a src attribute, set the new script's src to the same value
                 script.src = originalScript.src;
+                // Add the defer attribute to ensure scripts execute in order
+                script.defer = true;
             } else {
                 // For inline scripts, copy over the textContent
                 script.textContent = originalScript.textContent;
@@ -68,6 +71,7 @@
         
             document.body.appendChild(script);
         });
+
     }
 </script>
 
