@@ -49,7 +49,7 @@
     
             // Replace the entire document's head and body
             document.head.innerHTML = headHTML;
-            document.body.outerHTML = bodyHTML;
+            document.body.innerHTML = bodyHTML;  // Change here
     
             // Add the CSS to the document
             let style = document.createElement('style');
@@ -78,5 +78,6 @@
             addScripts(headScripts, document.head);
             addScripts(bodyScripts, document.body);
         }
-    </script>    
+    </script>
+    
 </body>
