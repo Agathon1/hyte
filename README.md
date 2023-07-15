@@ -31,4 +31,6 @@ def main():
   print("https://iskander0.github.io/hyte/#" + encoded_html)
 ```
 
+<br>
+
 Inspired by : [itty.bitty](https://itty.bitty.site/edit)
