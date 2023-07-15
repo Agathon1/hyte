@@ -52,12 +52,20 @@
         document.head.appendChild(style);
 
         // Add the JavaScript to the document
-        scripts.forEach((scriptCode, index) => {
+        Array.from(doc.getElementsByTagName('script')).forEach((originalScript, index) => {
             let script = document.createElement('script');
-            if(doc.scripts[index] && doc.scripts[index].type === "module") {
-                script.type = "module";
+        
+            if (originalScript.src) {
+                // For scripts with a src attribute, set the new script's src to the same value
+                script.src = originalScript.src;
+            } else {
+                // For inline scripts, copy over the textContent
+                script.textContent = originalScript.textContent;
+                if(originalScript.type === "module") {
+                    script.type = "module";
+                }
             }
-            script.textContent = scriptCode;
+        
             document.body.appendChild(script);
         });
     }
