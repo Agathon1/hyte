@@ -32,6 +32,9 @@
         let parser = new DOMParser();
         let doc = parser.parseFromString(htmlString, 'text/html');
 
+        // Get the head HTML (excluding <script> and <style> tags)
+        let headHTML = doc.head.innerHTML;
+
         // Get the body HTML (excluding <script> and <style> tags)
         let bodyHTML = doc.body.innerHTML;
 
@@ -41,7 +44,8 @@
         // Get the CSS code within <style> tags
         let styles = Array.from(doc.getElementsByTagName('style')).map(style => style.textContent);
 
-        // Add the body HTML to the document
+        // Replace the head and body HTML in the document
+        document.head.innerHTML = headHTML;
         document.body.innerHTML = bodyHTML;
 
         // Add the CSS to the document
@@ -52,15 +56,13 @@
         // Add the JavaScript to the document
         scripts.forEach((scriptCode, index) => {
             let script = document.createElement('script');
-        
-            // Check if it is a module script or normal script
-            if(doc.scripts[index].type === "module") {
+            if(doc.scripts[index] && doc.scripts[index].type === "module") {
                 script.type = "module";
             }
-            
             script.textContent = scriptCode;
             document.body.appendChild(script);
         });
     }
 </script>
+
 </body>
