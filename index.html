@@ -1,6 +1,6 @@
 <head>
     <!-- Including Pako library for inflating compressed data -->
-    <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>        
+    <script src="https://cdn.jsdelivr.net/npm/lzma-web@3.0.1/dist/index.min.js"></script>       
     <title>Hyte</title>
 </head>
 
@@ -21,8 +21,9 @@
             // Convert Base64 hash value to bytes
             let base64Bytes = base64ToBytes(hashValue);
 
-            // Decompress the Base64 bytes using Pako
-            let decompressedData = pako.inflate(base64Bytes);
+            // Decompress the Base64 bytes using LZMA
+            const lzma = new LZMA()
+            let decompressedData = await lzma.decompress(base64Bytes);
 
             // Decode the decompressed data to a HTML string
             let htmlString = new TextDecoder().decode(decompressedData);
