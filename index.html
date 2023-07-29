@@ -20,7 +20,7 @@
             // Convert Base64 hash value to bytes
             let base64Bytes = base64ToBytes(hashValue);
 
-            // Decompress the Base64 bytes using Pako
+            // Decompress the Base64 bytes using PAQ
             let decompressedData = (await unpaq(base64Bytes))
 
             // Decode the decompressed data to a HTML string
