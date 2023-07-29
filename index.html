@@ -15,7 +15,7 @@
 
         // Check if the URL contains a hash value
         if(window.location.hash) {
-            import { paq, unpaq } from "./paq.mjs"
+            import { unpaq } from "./paq.mjs"
             // Extract the first part of the hash value
             let hashValue = window.location.hash.substring(1).split("&")[0];
 
@@ -23,7 +23,7 @@
             let base64Bytes = base64ToBytes(hashValue);
 
             // Decompress the Base64 bytes using Pako
-            let decompressedData = (await paq(base64Bytes))
+            let decompressedData = (await unpaq(base64Bytes))
 
             // Decode the decompressed data to a HTML string
             let htmlString = new TextDecoder().decode(decompressedData);
