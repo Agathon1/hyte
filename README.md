@@ -10,28 +10,34 @@ You may then open that url in any browser, and the webapp will decode your docum
 
 All javascript, CSS, imports, etc work.
 
-Python encoder:
 
+NodeJS encoder:
+```js
+import { paq, unpaq } for "./paq_node.mjs"
+import fs from "fs"
+
+function Uint8ArrayTobase64(array) {
+  let b = ""
+  let len = array.byteLength
+
+  for (let i = 0; i < len; i++) {
+    b += String.fromCharCode(array[i])
+  }
+
+  return btoa(b)
+}
+
+//Call out to templating software, read static file from disk, etc
+let my_html = "<html><body><h1>Hello World</h1></body></html>"
+
+let my_html_bytes = new TextEncoder().encode(my_html)
+
+let my_html_compressed = await (paq(my_html_bytes))
+
+console.log("https://iskander0.github.io/hyte/#" + Uint8ArrayToBase64(my_html_compressed))
 ```
-import base64
-import gzip
 
-def encode_html(html: str) -> str:
-  compressed_html = gzip.compress(bytes(html, encoding="utf-8"))
-  base64_html = base64.b64encode(compressed_html).decode("utf-8")
-
-  return base64_html
-
-def main():
-  # Call out to PHP, read static file from disk, etc.
-  my_html = "<html><body><h1>Hello World</h1></body></html>"
-
-  encoded_html = encode_html(my_html)
-
-  print("https://iskander0.github.io/hyte/#" + encoded_html)
-```
-
-Written in collaboration with ChatGPT+ GPT-4
+Written in collaboration with ChatGPT4
 
 <br/><br/><br/>
 
