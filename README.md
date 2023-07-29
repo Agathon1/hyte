@@ -36,9 +36,8 @@ let my_html_compressed = await (paq(my_html_bytes))
 
 console.log("https://iskander0.github.io/hyte/#" + Uint8ArrayToBase64(my_html_compressed))
 ```
+<br/><br/><br/>
 
 Written in collaboration with ChatGPT4
-
-<br/><br/><br/>
 
 Inspired by : [itty.bitty](https://itty.bitty.site/edit)
