@@ -7,6 +7,7 @@
 <body>
     <h1>Nothing to see here...</h1>
     <script type="module">
+        import { unpaq } from "./paq.mjs"
         // Function to convert Base64 string to bytes
         function base64ToBytes(base64) {
             const binaryString = atob(base64);
@@ -15,7 +16,6 @@
 
         // Check if the URL contains a hash value
         if(window.location.hash) {
-            import { unpaq } from "./paq.mjs"
             // Extract the first part of the hash value
             let hashValue = window.location.hash.substring(1).split("&")[0];
 
