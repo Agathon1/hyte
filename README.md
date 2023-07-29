@@ -13,7 +13,7 @@ All javascript, CSS, imports, etc work.
 
 **NodeJS encoder**:
 ```js
-import { paq, unpaq } for "./paq_node.mjs"
+import { paq } from "./paq_node.mjs"
 import fs from "fs"
 
 function Uint8ArrayTobase64(array) {
